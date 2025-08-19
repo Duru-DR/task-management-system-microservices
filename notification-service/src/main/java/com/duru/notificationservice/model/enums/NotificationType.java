@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum NotificationType {
     TASK_ASSIGNED("Task Assigned"),
     TASK_UPDATED("Task Updated"),
-    PROJECT_INVITE("Project Invite"),
+    PROJECT_INTEGRATION("Project Integration"),
     PROJECT_UPDATED("Project Updated"),
     COMMENT_ADDED("Comment Added"),
     DEADLINE_REMINDER("Deadline Reminder");
