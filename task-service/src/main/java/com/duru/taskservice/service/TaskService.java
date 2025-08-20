@@ -19,6 +19,8 @@ public class TaskService {
 
     @Transactional
     public TaskResponse createTask(TaskRequest request) {
+        // TODO: Add The right permissions, only project owner/admin can assign tasks
+
         Task task = new Task();
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
