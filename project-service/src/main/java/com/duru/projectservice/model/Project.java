@@ -56,4 +56,8 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProjectMember> members = new HashSet<>();
 
+    public void addProjectMember(ProjectMember projectMember) {
+        members.add(projectMember);
+        projectMember.setProject(this);
+    }
 }

@@ -4,8 +4,11 @@ import com.duru.projectservice.dto.*;
 import com.duru.projectservice.service.ProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -19,7 +22,7 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<ProjectResponse> createProject(
             @Valid @RequestBody ProjectCreateRequest request) {
-        return ResponseEntity.ok(projectService.createProject(request));
+        return ResponseEntity.status(HttpStatus.SC_CREATED).body(projectService.createProject(request));
     }
 
     @GetMapping("/{id}")
@@ -28,15 +31,15 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProjectResponse>> getAllProjects() {
-        return ResponseEntity.ok(projectService.getAllProjects());
+    public ResponseEntity<Page<ProjectResponse>> getAllProjects(Pageable pageable) {
+        return ResponseEntity.ok(projectService.getAllProjects(pageable));
     }
 
-    @PostMapping("/{id}/member/{user_id}")
+    @PostMapping("/{id}/member/{userId}")
     public ResponseEntity<ProjectResponse> addMember(
             @PathVariable Long id,
-            @PathVariable Long user_id,
+            @PathVariable Long userId,
             @Valid @RequestBody AddMemberRequest request) {
-        return ResponseEntity.ok(projectService.addMember(id, user_id, request));
+        return ResponseEntity.ok(projectService.addMember(id, userId, request));
     }
 }

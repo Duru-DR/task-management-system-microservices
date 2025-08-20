@@ -11,6 +11,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -33,13 +35,13 @@ public class ProjectService {
         project.setStartDate(request.getStartDate());
         project.setEndDate(request.getEndDate());
 
-        Project saved = projectRepository.save(project);
-
         ProjectMember owner = new ProjectMember();
-        owner.setProject(saved);
         owner.setUserId(request.getOwnerId());
         owner.setRole(ProjectRole.OWNER);
-        projectMemberRepository.save(owner);
+
+        project.addProjectMember(owner);
+
+        Project saved = projectRepository.save(project);
 
         return mapToResponse(saved);
     }
@@ -52,29 +54,34 @@ public class ProjectService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProjectResponse> getAllProjects() {
-        return projectRepository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<ProjectResponse> getAllProjects(Pageable pageable) {
+        return projectRepository.findAll(pageable)
+                .map(this::mapToResponse);
     }
 
-    public ProjectResponse addMember(Long projectId, Long user_id, AddMemberRequest request) {
+    public ProjectResponse addMember(Long projectId, Long userId, AddMemberRequest request) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found"));
 
         boolean isOwner = project.getMembers().stream()
-                .anyMatch(m -> m.getUserId().equals(user_id) && m.getRole() == ProjectRole.OWNER);
+                .anyMatch(m -> m.getUserId().equals(userId) && m.getRole() == ProjectRole.OWNER);
 
         if (!isOwner) {
             throw new SecurityException("Only project owner can add members");
         }
 
+        boolean alreadyMember = project.getMembers().stream()
+                .anyMatch(m -> m.getUserId().equals(request.getUserId()));
+        if (alreadyMember) {
+            throw new IllegalArgumentException("User is already a member of this project");
+        }
+
         ProjectMember member = new ProjectMember();
-        member.setProject(project);
         member.setUserId(request.getUserId());
         member.setRole(request.getRole());
 
-        projectMemberRepository.save(member);
+        project.addProjectMember(member);
+        projectRepository.save(project);
 
         return mapToResponse(project);
     }
