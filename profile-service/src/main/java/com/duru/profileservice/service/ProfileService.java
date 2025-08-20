@@ -1,7 +1,6 @@
 package com.duru.profileservice.service;
 
-import com.duru.profileservice.dto.ProfileRequest;
-import com.duru.profileservice.dto.ProfileResponse;
+import com.duru.profileservice.dto.*;
 import com.duru.profileservice.model.Profile;
 import com.duru.profileservice.repository.ProfileRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,13 +33,13 @@ public class ProfileService {
     }
 
     public ProfileResponse getMyProfile(Long userId) {
-        // for now it's the same as getProfileById
+        // for the moment it s the same as getProfileById
         Profile profile = repository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Profile not found with id: " + userId));
         return mapToResponse(profile);
     }
 
-    public ProfileResponse updateProfile(Long id, ProfileRequest request) {
+    public ProfileResponse updateProfile(Long id, ProfileUpdateRequest request) {
         Profile profile = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Profile not found with id: " + id));
 

@@ -1,10 +1,10 @@
 package com.duru.profileservice.controller;
 
-import com.duru.profileservice.dto.ProfileRequest;
-import com.duru.profileservice.dto.ProfileResponse;
+import com.duru.profileservice.dto.*;
 import com.duru.profileservice.service.ProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ public class ProfileController {
 
     @PostMapping
     public ResponseEntity<ProfileResponse> createProfile(@Valid @RequestBody ProfileRequest request) {
-        return ResponseEntity.ok(service.createProfile(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.createProfile(request));
     }
 
     @GetMapping("/{id}")
@@ -31,7 +31,7 @@ public class ProfileController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProfileResponse> updateProfile(@PathVariable Long id, @Valid @RequestBody ProfileRequest request) {
+    public ResponseEntity<ProfileResponse> updateProfile(@PathVariable Long id, @Valid @RequestBody ProfileUpdateRequest request) {
         return ResponseEntity.ok(service.updateProfile(id, request));
     }
 }
