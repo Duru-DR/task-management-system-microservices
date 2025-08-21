@@ -125,6 +125,17 @@ services:
 #    networks:
 #      - microservices
 
+  config-service:
+    build: ./config-server
+    container_name: config-service
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8888:8888"
+    networks:
+          - microservices
+
 # =====================
 # Shared Network
 # =====================
