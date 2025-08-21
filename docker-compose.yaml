@@ -1,0 +1,125 @@
+version: "3.9"
+
+services:
+  # =====================
+  # Profile Service + DB
+  # =====================
+  profile-db:
+    image: postgres:15
+    container_name: profile-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${PROFILE_DB_NAME}
+      POSTGRES_USER: ${PROFILE_DB_USER}
+      POSTGRES_PASSWORD: ${PROFILE_DB_PASSWORD}
+    networks:
+      - microservices
+
+  profile-service:
+    build: ./profile-service
+    container_name: profile-service
+    restart: always
+    depends_on:
+      - profile-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://profile-db:5432/${PROFILE_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${PROFILE_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PROFILE_DB_PASSWORD}
+    ports:
+      - "${PROFILE_SERVICE_PORT}:8080"
+    networks:
+      - microservices
+
+  # =====================
+  # Project Service + DB
+  # =====================
+  project-db:
+    image: postgres:15
+    container_name: project-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${PROJECT_DB_NAME}
+      POSTGRES_USER: ${PROJECT_DB_USER}
+      POSTGRES_PASSWORD: ${PROJECT_DB_PASSWORD}
+    networks:
+      - microservices
+
+  project-service:
+    build: ./project-service
+    container_name: project-service
+    restart: always
+    depends_on:
+      - project-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://project-db:5432/${PROJECT_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${PROJECT_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PROJECT_DB_PASSWORD}
+    ports:
+      - "${PROJECT_SERVICE_PORT}:8080"
+    networks:
+      - microservices
+
+  # =====================
+  # Task Service + DB
+  # =====================
+  task-db:
+    image: postgres:15
+    container_name: task-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${TASK_DB_NAME}
+      POSTGRES_USER: ${TASK_DB_USER}
+      POSTGRES_PASSWORD: ${TASK_DB_PASSWORD}
+    networks:
+      - microservices
+
+  task-service:
+    build: ./task-service
+    container_name: task-service
+    restart: always
+    depends_on:
+      - task-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://task-db:5432/${TASK_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${TASK_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${TASK_DB_PASSWORD}
+    ports:
+      - "${TASK_SERVICE_PORT}:8080"
+    networks:
+      - microservices
+
+  # =====================
+  # Notification Service + DB
+  # =====================
+#  notification-db:
+#    image: postgres:15
+#    container_name: notification-db
+#    restart: always
+#    environment:
+#      POSTGRES_DB: ${NOTIFICATION_DB_NAME}
+#      POSTGRES_USER: ${NOTIFICATION_DB_USER}
+#      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
+#    networks:
+#      - microservices
+#
+#  notification-service:
+#    build: ./notification-service
+#    container_name: notification-service
+#    restart: always
+#    depends_on:
+#      - notification-db
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://notification-db:5432/${NOTIFICATION_DB_NAME}
+#      SPRING_DATASOURCE_USERNAME: ${NOTIFICATION_DB_USER}
+#      SPRING_DATASOURCE_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
+#    ports:
+#      - "${NOTIFICATION_SERVICE_PORT}:8080"
+#    networks:
+#      - microservices
+
+# =====================
+# Shared Network
+# =====================
+networks:
+  microservices:
+    driver: bridge
