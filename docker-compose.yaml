@@ -23,6 +23,7 @@ services:
     restart: always
     depends_on:
       - profile-db
+      - config-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://profile-db:5432/${PROFILE_DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${PROFILE_DB_USER}
@@ -54,6 +55,7 @@ services:
     restart: always
     depends_on:
       - project-db
+      - config-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://project-db:5432/${PROJECT_DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${PROJECT_DB_USER}
@@ -85,6 +87,7 @@ services:
     restart: always
     depends_on:
       - task-db
+      - config-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://task-db:5432/${TASK_DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${TASK_DB_USER}
@@ -116,6 +119,7 @@ services:
 #    restart: always
 #    depends_on:
 #      - notification-db
+#      - config-service
 #    environment:
 #      SPRING_DATASOURCE_URL: jdbc:postgresql://notification-db:5432/${NOTIFICATION_DB_NAME}
 #      SPRING_DATASOURCE_USERNAME: ${NOTIFICATION_DB_USER}
@@ -129,6 +133,8 @@ services:
     build: ./config-server
     container_name: config-service
     restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=git
     env_file:
       - .env
     ports:

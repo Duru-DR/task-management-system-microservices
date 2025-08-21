@@ -9,7 +9,7 @@ spring:
     config:
       server:
         git:
-          uri: git@github.com:Duru-DR/task_management_system_config_repo.git
+          uri: https://github.com/Duru-DR/task_management_system_config_repo.git
           clone-on-start: true
           default-label: main
           username: ${GITHUB_USERNAME}
