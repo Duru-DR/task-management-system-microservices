@@ -129,6 +129,9 @@ services:
 #    networks:
 #      - microservices
 
+  # =====================
+  # Config Server
+  # =====================
   config-service:
     build: ./config-server
     container_name: config-service
@@ -141,6 +144,18 @@ services:
       - "8888:8888"
     networks:
           - microservices
+
+  # =====================
+  # Zipkin
+  # =====================
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    restart: always
+    ports:
+      - "9411:9411"
+    networks:
+      - microservices
 
 # =====================
 # Shared Network
