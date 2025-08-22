@@ -162,6 +162,18 @@ services:
           - microservices
 
   # =====================
+  # EUREKA
+  # =====================
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    restart: always
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices
+
+  # =====================
   # Zipkin
   # =====================
   zipkin:
