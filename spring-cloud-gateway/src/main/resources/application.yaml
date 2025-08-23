@@ -8,22 +8,32 @@ spring:
     gateway:
       routes:
         - id: profile-service
-          uri: lb://PROFILE-SERVICE
+          uri: lb://profile-service
           predicates:
-            - Path=/profile/**
+            - Path=/api/v1/profiles/**
         - id: project-service
-          uri: lb://PROJECT-SERVICE
+          uri: lb://project-service
           predicates:
-            - Path=/project/**
+            - Path=/api/v1/projects/**
         - id: task-service
-          uri: lb://TASK-SERVICE
+          uri: lb://task-service
           predicates:
-            - Path=/task/**
+            - Path=/api/v1/tasks/**
 
 eureka:
   client:
     service-url:
       defaultZone: http://eureka-server:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
 
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      enabled: true
