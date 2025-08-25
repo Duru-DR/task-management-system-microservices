@@ -1,6 +1,7 @@
 package com.duru.projectservice.controller;
 
 import com.duru.projectservice.dto.*;
+import com.duru.projectservice.model.enums.ProjectRole;
 import com.duru.projectservice.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -78,5 +79,18 @@ public class ProjectController {
             @PathVariable Long userId,
             @Valid @RequestBody AddMemberRequest request) {
         return ResponseEntity.ok(projectService.addMember(id, userId, request));
+    }
+
+    @GetMapping("/{projectId}/members/{userId}/role")
+    public ResponseEntity<ProjectRole> getUserRoleInProject(
+            @PathVariable Long projectId,
+            @PathVariable Long userId) {
+        ProjectResponse project = projectService.getProject(projectId);
+
+        return project.getMembers().stream()
+                .filter(m -> m.getUserId().equals(userId))
+                .findFirst()
+                .map(m -> ResponseEntity.ok(m.getRole()))
+                .orElse(ResponseEntity.notFound().build());
     }
 }

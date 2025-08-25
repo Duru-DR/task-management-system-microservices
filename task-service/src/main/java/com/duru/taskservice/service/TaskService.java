@@ -1,6 +1,8 @@
 package com.duru.taskservice.service;
 
+import com.duru.taskservice.client.ProjectServiceClient;
 import com.duru.taskservice.dto.*;
+import com.duru.taskservice.client.enums.ProjectRole;
 import com.duru.taskservice.exception.ResourceNotFoundException;
 import com.duru.taskservice.model.Task;
 import com.duru.taskservice.model.TaskComment;
@@ -18,10 +20,18 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final TaskCommentRepository commentRepository;
     private final TaskEventsProducer taskEventsProducer;
+    private final ProjectServiceClient projectServiceClient;
 
     @Transactional
     public TaskResponse createTask(TaskRequest request) {
-        // TODO: Add The right permissions, only project owner/admin can assign tasks
+        ProjectRole role = projectServiceClient.getUserRole(
+                request.getProjectId(),
+                request.getCreatedBy()
+        );
+
+        if (role != ProjectRole.OWNER && role != ProjectRole.ADMIN) {
+            throw new SecurityException("Only project owner or admin can assign tasks");
+        }
 
         Task task = new Task();
         task.setTitle(request.getTitle());
