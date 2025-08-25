@@ -6,6 +6,7 @@ import com.duru.taskservice.model.Task;
 import com.duru.taskservice.model.TaskComment;
 import com.duru.taskservice.repository.TaskCommentRepository;
 import com.duru.taskservice.repository.TaskRepository;
+import com.duru.taskservice.event.TaskEventsProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final TaskCommentRepository commentRepository;
+    private final TaskEventsProducer taskEventsProducer;
 
     @Transactional
     public TaskResponse createTask(TaskRequest request) {
@@ -35,6 +37,12 @@ public class TaskService {
         }
 
         Task saved = taskRepository.save(task);
+        taskEventsProducer.publishTaskCreated(
+                String.valueOf(task.getId()),
+                task.getTitle(),
+                task.getDescription(),
+                String.valueOf(task.getCreatedBy())
+        );
         return mapToResponse(saved);
     }
 

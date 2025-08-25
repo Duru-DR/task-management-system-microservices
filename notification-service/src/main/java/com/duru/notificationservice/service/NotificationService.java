@@ -1,6 +1,7 @@
 package com.duru.notificationservice.service;
 
 import com.duru.notificationservice.dto.NotificationResponse;
+import com.duru.notificationservice.dto.TaskCreatedEvent;
 import com.duru.notificationservice.model.Notification;
 import com.duru.notificationservice.model.enums.NotificationType;
 import com.duru.notificationservice.repository.NotificationRepository;
@@ -39,6 +40,14 @@ public class NotificationService {
         n.setType(type);
         n.setMessage(message);
         n.setReferenceId(referenceId);
+        repository.save(n);
+    }
+
+    @Transactional
+    public void handleTaskCreated(TaskCreatedEvent event) {
+        Notification n = new Notification();
+        n.setUserId((long)1);
+        n.setMessage("hello");
         repository.save(n);
     }
 

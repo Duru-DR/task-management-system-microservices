@@ -112,38 +112,38 @@ services:
   # =====================
   # Notification Service + DB
   # =====================
-#  notification-db:
-#    image: postgres:15
-#    container_name: notification-db
-#    restart: always
-#    env_file:
-#        - .env
-#    environment:
-#      POSTGRES_DB: ${NOTIFICATION_DB_NAME}
-#      POSTGRES_USER: ${NOTIFICATION_DB_USER}
-#      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
-#    ports:
-#      - ${NOTIFICATION_DB_PORT}:5432
-#    networks:
-#      - microservices
-#
-#  notification-service:
-#    build: ./notification-service
-#    container_name: notification-service
-#    restart: always
-#  env_file:
-#    - .env
-#    depends_on:
-#      - notification-db
-#      - config-server
-#    environment:
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://notification-db:5432/${NOTIFICATION_DB_NAME}
-#      SPRING_DATASOURCE_USERNAME: ${NOTIFICATION_DB_USER}
-#      SPRING_DATASOURCE_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
-#    ports:
-#      - ${NOTIFICATION_SERVICE_PORT}:8080
-#    networks:
-#      - microservices
+  notification-db:
+    image: postgres:15
+    container_name: notification-db
+    restart: always
+    env_file:
+        - .env
+    environment:
+      POSTGRES_DB: ${NOTIFICATION_DB_NAME}
+      POSTGRES_USER: ${NOTIFICATION_DB_USER}
+      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
+    ports:
+      - ${NOTIFICATION_DB_PORT}:5432
+    networks:
+      - microservices
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - notification-db
+      - config-server
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://notification-db:5432/${NOTIFICATION_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${NOTIFICATION_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
+    ports:
+      - ${NOTIFICATION_SERVICE_PORT}:8080
+    networks:
+      - microservices
 
   # =====================
   # Config Server
@@ -194,6 +194,41 @@ services:
     restart: always
     ports:
       - "9411:9411"
+    networks:
+      - microservices
+
+  # =====================
+  # Kafka
+  # =====================
+  kafka:
+    image: bitnami/kafka:3.7
+    container_name: kafka
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    ports:
+      - "9092:9092"
+    networks:
+      - microservices
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    ports:
+      - "8088:8080"
+    depends_on:
+      - kafka
     networks:
       - microservices
 
