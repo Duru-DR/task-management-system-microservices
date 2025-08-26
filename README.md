@@ -18,7 +18,6 @@ The system is composed of multiple microservices communicating over REST and Kaf
 
 API Documentation via OpenApi/Swagger
 
-## 🏗️ Architecture
 
     
 ## ⚙️ Installation & Setup
