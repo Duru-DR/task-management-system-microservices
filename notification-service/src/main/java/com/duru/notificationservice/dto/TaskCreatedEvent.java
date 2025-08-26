@@ -6,5 +6,6 @@ public record TaskCreatedEvent(
         String title,
         String description,
         String assignedTo,
+        String eventType,
         long occurredAtEpochMs
 ) {}

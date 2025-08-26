@@ -6,11 +6,10 @@ import com.duru.notificationservice.model.Notification;
 import com.duru.notificationservice.model.enums.NotificationType;
 import com.duru.notificationservice.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,11 +17,9 @@ public class NotificationService {
 
     private final NotificationRepository repository;
 
-    public List<NotificationResponse> getUserNotifications(Long userId) {
-        return repository.findByUserIdOrderByCreatedAtDesc(userId)
-                .stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+    public Page<NotificationResponse> getUserNotifications(Long userId, Pageable pageable) {
+        return repository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
+                .map(this::toDto);
     }
 
     @Transactional
@@ -34,20 +31,22 @@ public class NotificationService {
     }
 
     @Transactional
-    public void createNotification(Long userId, NotificationType type, String message, Long referenceId) {
+    public void createNotification(TaskCreatedEvent event) {
         Notification n = new Notification();
-        n.setUserId(userId);
-        n.setType(type);
-        n.setMessage(message);
-        n.setReferenceId(referenceId);
+        n.setUserId(Long.parseLong(event.assignedTo()));
+        n.setType(NotificationType.TASK_ASSIGNED);
+        n.setMessage("Task" + event.taskId() + " -> " + event.title() + " : " + event.description());
+        n.setReferenceId(Long.parseLong(event.taskId()));
         repository.save(n);
     }
 
     @Transactional
-    public void handleTaskCreated(TaskCreatedEvent event) {
+    public void handleTaskUpdated(TaskCreatedEvent event) {
         Notification n = new Notification();
-        n.setUserId((long)1);
-        n.setMessage("hello");
+        n.setUserId(Long.parseLong(event.assignedTo()));
+        n.setType(NotificationType.TASK_UPDATED);
+        n.setMessage("Task" + event.taskId() + " -> " + event.title() + " : " + event.description());
+        n.setReferenceId(Long.parseLong(event.taskId()));
         repository.save(n);
     }
 

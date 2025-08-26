@@ -16,14 +16,11 @@ public class TaskEventsListener {
     private final NotificationService notificationService;
 
     @KafkaListener(topics = "task-events", groupId = "notification-service")
-    public void onTaskCreated(
-            TaskCreatedEvent event,
-            @Header(KafkaHeaders.RECEIVED_KEY) String key,
-            ConsumerRecord<String, TaskCreatedEvent> record) {
-        System.out.println(event);
-        System.out.println(event.title() + " " + event.description());
-        System.out.println(record.value());
-        System.out.println("++++++++++++++++++++++++++++++++++++++\n++++++++++++++++++++++++++++++++++++++\n+++++++NOTIF EVENT TO CAPTURE ++++++++++++++++++++\n++++++++++++++++++++++++++++++++++\n++++++++++++++++++++++++++++");
-        notificationService.handleTaskCreated(event);
+    public void onTaskCreated(TaskCreatedEvent event) {
+        if (event.eventType().equals("event created")) {
+            notificationService.createNotification(event);
+        } else {
+            notificationService.handleTaskUpdated(event);
+        }
     }
 }

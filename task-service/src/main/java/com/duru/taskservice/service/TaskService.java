@@ -24,14 +24,14 @@ public class TaskService {
 
     @Transactional
     public TaskResponse createTask(TaskRequest request) {
-        ProjectRole role = projectServiceClient.getUserRole(
-                request.getProjectId(),
-                request.getCreatedBy()
-        );
-
-        if (role != ProjectRole.OWNER && role != ProjectRole.ADMIN) {
-            throw new SecurityException("Only project owner or admin can assign tasks");
-        }
+//        ProjectRole role = projectServiceClient.getUserRole(
+//                request.getProjectId(),
+//                request.getCreatedBy()
+//        );
+//
+//        if (role != ProjectRole.OWNER && role != ProjectRole.ADMIN) {
+//            throw new SecurityException("Only project owner or admin can assign tasks");
+//        }
 
         Task task = new Task();
         task.setTitle(request.getTitle());
@@ -51,7 +51,8 @@ public class TaskService {
                 String.valueOf(task.getId()),
                 task.getTitle(),
                 task.getDescription(),
-                String.valueOf(task.getCreatedBy())
+                String.valueOf(task.getAssignedTo()),
+                "Task Assigned"
         );
         return mapToResponse(saved);
     }
@@ -76,6 +77,13 @@ public class TaskService {
         if (request.getDueDate() != null) task.setDueDate(request.getDueDate());
 
         Task updated = taskRepository.save(task);
+        taskEventsProducer.publishTaskCreated(
+                String.valueOf(task.getId()),
+                task.getTitle(),
+                task.getDescription(),
+                String.valueOf(task.getAssignedTo()),
+                "Task Updated"
+        );
         return mapToResponse(updated);
     }
 

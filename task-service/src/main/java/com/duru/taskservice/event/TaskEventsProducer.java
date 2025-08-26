@@ -15,13 +15,14 @@ public class TaskEventsProducer {
 
     private final KafkaTemplate<String, TaskCreatedEvent> kafkaTemplate;
 
-    public void publishTaskCreated(String taskId, String title, String description, String assignedTo) {
+    public void publishTaskCreated(String taskId, String title, String description, String assignedTo, String eventType) {
         var event = new TaskCreatedEvent(
                 UUID.randomUUID().toString(),
                 taskId,
                 title,
                 description,
                 assignedTo,
+                eventType,
                 System.currentTimeMillis()
         );
         kafkaTemplate.send(TASK_EVENTS_TOPIC, taskId, event);
