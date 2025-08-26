@@ -66,6 +66,8 @@ Tracing: Zipkin
 
 Database migrations through Flyway
 
+Centralized Configuration through config server
+
 ## 📸 Screenshots
 
 ## 🧑‍💻 Author
