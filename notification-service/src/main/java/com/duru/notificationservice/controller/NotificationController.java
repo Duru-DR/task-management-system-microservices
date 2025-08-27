@@ -1,6 +1,8 @@
 package com.duru.notificationservice.controller;
 
 import com.duru.notificationservice.dto.NotificationResponse;
+import com.duru.notificationservice.model.Notification;
+import com.duru.notificationservice.model.enums.NotificationType;
 import com.duru.notificationservice.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/notifications")
+@RequestMapping("/api/v1/notifications")
 @RequiredArgsConstructor
 @Tag(name = "Notification Management", description = "Endpoints for managing user Notifications")
 public class NotificationController {

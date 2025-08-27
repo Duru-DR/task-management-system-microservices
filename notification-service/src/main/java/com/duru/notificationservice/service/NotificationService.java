@@ -24,6 +24,11 @@ public class NotificationService {
 
     @Transactional
     public void markAsRead(Long id) {
+        Notification n = new Notification();
+        n.setUserId((long)1);
+        n.setType(NotificationType.TASK_UPDATED);
+        repository.save(n);
+
         Notification notification = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
         notification.setRead(true);
