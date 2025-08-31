@@ -1,0 +1,240 @@
+version: "3.9"
+
+services:
+  # =====================
+  # Profile Service + DB
+  # =====================
+  profile-db:
+    image: postgres:15
+    container_name: profile-db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${PROFILE_DB_NAME}
+      POSTGRES_USER: ${PROFILE_DB_USER}
+      POSTGRES_PASSWORD: ${PROFILE_DB_PASSWORD}
+    ports:
+      - ${PROFILE_DB_PORT}:5432
+    networks:
+      - microservices
+
+  profile-service:
+    image: fraqioui247/profile-service:latest
+    container_name: profile-service
+    restart: always
+    depends_on:
+      - profile-db
+      - config-server
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://profile-db:5432/${PROFILE_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${PROFILE_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PROFILE_DB_PASSWORD}
+    ports:
+      - ${PROFILE_SERVICE_PORT}:8080
+    networks:
+      - microservices
+
+  # =====================
+  # Project Service + DB
+  # =====================
+  project-db:
+    image: postgres:15
+    container_name: project-db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${PROJECT_DB_NAME}
+      POSTGRES_USER: ${PROJECT_DB_USER}
+      POSTGRES_PASSWORD: ${PROJECT_DB_PASSWORD}
+    ports:
+      - ${PROJECT_DB_PORT}:5432
+    networks:
+      - microservices
+
+  project-service:
+    image: fraqioui247/project-service:latest
+    container_name: project-service
+    restart: always
+    depends_on:
+      - project-db
+      - config-server
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://project-db:5432/${PROJECT_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${PROJECT_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${PROJECT_DB_PASSWORD}
+    ports:
+      - ${PROJECT_SERVICE_PORT}:8080
+    networks:
+      - microservices
+
+  # =====================
+  # Task Service + DB
+  # =====================
+  task-db:
+    image: postgres:15
+    container_name: task-db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${TASK_DB_NAME}
+      POSTGRES_USER: ${TASK_DB_USER}
+      POSTGRES_PASSWORD: ${TASK_DB_PASSWORD}
+    ports:
+      - ${TASK_DB_PORT}:5432
+    networks:
+      - microservices
+
+  task-service:
+    image: fraqioui247/task-service:latest
+    container_name: task-service
+    restart: always
+    depends_on:
+      - task-db
+      - config-server
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://task-db:5432/${TASK_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${TASK_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${TASK_DB_PASSWORD}
+    ports:
+      - ${TASK_SERVICE_PORT}:8080
+    networks:
+      - microservices
+
+  # =====================
+  # Notification Service + DB
+  # =====================
+  notification-db:
+    image: postgres:15
+    container_name: notification-db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${NOTIFICATION_DB_NAME}
+      POSTGRES_USER: ${NOTIFICATION_DB_USER}
+      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
+    ports:
+      - ${NOTIFICATION_DB_PORT}:5432
+    networks:
+      - microservices
+
+  notification-service:
+    image: fraqioui247/notification-service:latest
+    container_name: notification-service
+    restart: always
+    depends_on:
+      - notification-db
+      - config-server
+    env_file:
+      - .env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://notification-db:5432/${NOTIFICATION_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${NOTIFICATION_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
+    ports:
+      - ${NOTIFICATION_SERVICE_PORT}:8080
+    networks:
+      - microservices
+
+  # =====================
+  # Config Server
+  # =====================
+  config-server:
+    image: fraqioui247/config-server:latest
+    container_name: config-server
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=git
+    ports:
+      - "8888:8888"
+    networks:
+      - microservices
+
+  # =====================
+  # Eureka Server
+  # =====================
+  eureka-server:
+    image: fraqioui247/eureka-server:latest
+    container_name: eureka-server
+    restart: always
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices
+
+  # =====================
+  # API Gateway
+  # =====================
+  spring-cloud-gateway:
+    image: fraqioui247/spring-cloud-gateway:latest
+    container_name: spring-cloud-gateway
+    restart: always
+    ports:
+      - "9090:9090"
+    networks:
+      - microservices
+
+  # =====================
+  # Zipkin
+  # =====================
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    restart: always
+    ports:
+      - "9411:9411"
+    networks:
+      - microservices
+
+  # =====================
+  # Kafka
+  # =====================
+  kafka:
+    image: bitnami/kafka:3.7
+    container_name: kafka
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=false
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    ports:
+      - "9092:9092"
+    networks:
+      - microservices
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    ports:
+      - "8088:8080"
+    depends_on:
+      - kafka
+    networks:
+      - microservices
+
+# =====================
+# Shared Network
+# =====================
+networks:
+  microservices:
+    driver: bridge
