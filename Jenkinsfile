@@ -42,25 +42,25 @@ pipeline {
         stage('Build & Test') {
             parallel {
                 stage('Profile Service') {
-                    steps { dir('profile-service') { sh 'mvn clean install -B' } }
+                    steps { dir('profile-service') { sh 'mvn clean install -B -DskipTests' } }
                 }
                 stage('Project Service') {
-                    steps { dir('project-service') { sh 'mvn clean install -B' } }
+                    steps { dir('project-service') { sh 'mvn clean install -B -DskipTests' } }
                 }
                 stage('Task Service') {
-                    steps { dir('task-service') { sh 'mvn clean install -B' } }
+                    steps { dir('task-service') { sh 'mvn clean install -B -DskipTests' } }
                 }
                 stage('Notification Service') {
-                    steps { dir('notification-service') { sh 'mvn clean install -B' } }
+                    steps { dir('notification-service') { sh 'mvn clean install -B -DskipTests' } }
                 }
                 stage('Config Server') {
-                    steps { dir('config-server') { sh 'mvn clean install -B' } }
+                    steps { dir('config-server') { sh 'mvn clean install -B -DskipTests' } }
                 }
                 stage('Eureka Server') {
-                    steps { dir('eureka-server') { sh 'mvn clean install -B' } }
+                    steps { dir('eureka-server') { sh 'mvn clean install -B -DskipTests' } }
                 }
                 stage('API Gateway') {
-                    steps { dir('spring-cloud-gateway') { sh 'mvn clean install -B' } }
+                    steps { dir('spring-cloud-gateway') { sh 'mvn clean install -B -DskipTests' } }
                 }
             }
         }
