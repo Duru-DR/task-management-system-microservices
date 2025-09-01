@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'fraqioui247/my-jenkins-agent:latest'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
         }
     }
 
@@ -73,6 +73,7 @@ pipeline {
                             echo "Building Docker image for ${srv}"
                             def image = docker.build("${REGISTRY}/${srv}:${IMAGE_TAG}", "./${srv}")
                             image.push()
+                            image.push('latest')
                         }
                     }
                 }
