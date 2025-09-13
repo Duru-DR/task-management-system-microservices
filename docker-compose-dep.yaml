@@ -20,7 +20,7 @@ services:
       - microservices
 
   profile-service:
-    image: fraqioui247/profile-service:latest
+    image: fraqioui247/profile-service:${IMAGE_TAG}
     container_name: profile-service
     restart: always
     depends_on:
@@ -56,7 +56,7 @@ services:
       - microservices
 
   project-service:
-    image: fraqioui247/project-service:latest
+    image: fraqioui247/project-service:${IMAGE_TAG}
     container_name: project-service
     restart: always
     depends_on:
@@ -92,7 +92,7 @@ services:
       - microservices
 
   task-service:
-    image: fraqioui247/task-service:latest
+    image: fraqioui247/task-service:${IMAGE_TAG}
     container_name: task-service
     restart: always
     depends_on:
@@ -128,7 +128,7 @@ services:
       - microservices
 
   notification-service:
-    image: fraqioui247/notification-service:latest
+    image: fraqioui247/notification-service:${IMAGE_TAG}
     container_name: notification-service
     restart: always
     depends_on:
@@ -149,7 +149,7 @@ services:
   # Config Server
   # =====================
   config-server:
-    image: fraqioui247/config-server:latest
+    image: fraqioui247/config-server:${IMAGE_TAG}
     container_name: config-server
     restart: always
     env_file:
@@ -165,7 +165,7 @@ services:
   # Eureka Server
   # =====================
   eureka-server:
-    image: fraqioui247/eureka-server:latest
+    image: fraqioui247/eureka-server:${IMAGE_TAG}
     container_name: eureka-server
     restart: always
     ports:
@@ -177,7 +177,7 @@ services:
   # API Gateway
   # =====================
   spring-cloud-gateway:
-    image: fraqioui247/spring-cloud-gateway:latest
+    image: fraqioui247/spring-cloud-gateway:${IMAGE_TAG}
     container_name: spring-cloud-gateway
     restart: always
     ports:

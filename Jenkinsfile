@@ -73,7 +73,6 @@ pipeline {
                             echo "Building Docker image for ${srv}"
                             def image = docker.build("${REGISTRY}/${srv}:${IMAGE_TAG}", "./${srv}")
                             image.push()
-                            image.push('latest')
                         }
                     }
                 }
