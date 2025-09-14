@@ -101,9 +101,9 @@ pipeline {
                     "GITHUB_TOKEN=${GITHUB_TOKEN}"
                 ]) {
                     sh '''
-                        docker compose -f docker-compose-dep.yml down -v
-                        docker compose -f docker-compose-dep.yml pull
-                        docker compose -f docker-compose-dep.yml up -d
+                        docker compose -f docker-compose-dep.yaml down -v
+                        docker compose -f docker-compose-dep.yaml pull
+                        docker compose -f docker-compose-dep.yaml up -d
                     '''
                 }
             }
