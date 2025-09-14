@@ -83,27 +83,29 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh """
-                    export IMAGE_TAG=${IMAGE_TAG}
-                    export PROFILE_DB_NAME=${PROFILE_DB_NAME}
-                    export PROFILE_DB_USER=${PROFILE_DB_USER}
-                    export PROJECT_DB_NAME=${PROJECT_DB_NAME}
-                    export PROJECT_DB_USER=${PROJECT_DB_USER}
-                    export TASK_DB_NAME=${TASK_DB_NAME}
-                    export TASK_DB_USER=${TASK_DB_USER}
-                    export NOTIFICATION_DB_NAME=${NOTIFICATION_DB_NAME}
-                    export NOTIFICATION_DB_USER=${NOTIFICATION_DB_USER}
-                    export PROFILE_DB_PASSWORD=${PROFILE_DB_PASSWORD}
-                    export PROJECT_DB_PASSWORD=${PROJECT_DB_PASSWORD}
-                    export TASK_DB_PASSWORD=${TASK_DB_PASSWORD}
-                    export NOTIFICATION_DB_PASSWORD=${NOTIFICATION_DB_PASSWORD}
-                    export GITHUB_USERNAME=${GITHUB_USERNAME}
-                    export GITHUB_TOKEN=${GITHUB_TOKEN}
-
-                    docker-compose -f docker-compose-dep.yml down -v
-                    docker-compose -f docker-compose-dep.yml pull
-                    docker-compose -f docker-compose-dep.yml up -d
-                """
+                withEnv([
+                    "IMAGE_TAG=${IMAGE_TAG}",
+                    "PROFILE_DB_NAME=${PROFILE_DB_NAME}",
+                    "PROFILE_DB_USER=${PROFILE_DB_USER}",
+                    "PROJECT_DB_NAME=${PROJECT_DB_NAME}",
+                    "PROJECT_DB_USER=${PROJECT_DB_USER}",
+                    "TASK_DB_NAME=${TASK_DB_NAME}",
+                    "TASK_DB_USER=${TASK_DB_USER}",
+                    "NOTIFICATION_DB_NAME=${NOTIFICATION_DB_NAME}",
+                    "NOTIFICATION_DB_USER=${NOTIFICATION_DB_USER}",
+                    "PROFILE_DB_PASSWORD=${PROFILE_DB_PASSWORD}",
+                    "PROJECT_DB_PASSWORD=${PROJECT_DB_PASSWORD}",
+                    "TASK_DB_PASSWORD=${TASK_DB_PASSWORD}",
+                    "NOTIFICATION_DB_PASSWORD=${NOTIFICATION_DB_PASSWORD}",
+                    "GITHUB_USERNAME=${GITHUB_USERNAME}",
+                    "GITHUB_TOKEN=${GITHUB_TOKEN}"
+                ]) {
+                    sh '''
+                        docker compose -f docker-compose-dep.yml down -v
+                        docker compose -f docker-compose-dep.yml pull
+                        docker compose -f docker-compose-dep.yml up -d
+                    '''
+                }
             }
         }
     }
