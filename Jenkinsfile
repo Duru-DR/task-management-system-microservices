@@ -68,7 +68,9 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("https://index.docker.io/v1/", REGISTRY_CREDENTIALS) {
-                        def services = ["profile-service", "project-service", "task-service", "notification-service", "config-server", "spring-cloud-gateway", "eureka-server"]
+//                         def services = ["profile-service", "project-service", "task-service", "notification-service", "config-server", "spring-cloud-gateway", "eureka-server"]
+                        def services = ["profile-service", "config-server"]
+
                         for (srv in services) {
                             echo "Building Docker image for ${srv}"
                             def image = docker.build("${REGISTRY}/${srv}:${IMAGE_TAG}", "./${srv}")
