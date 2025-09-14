@@ -43,24 +43,24 @@ pipeline {
                 stage('Profile Service') {
                     steps { dir('profile-service') { sh 'mvn clean install -B -DskipTests' } }
                 }
-                stage('Project Service') {
-                    steps { dir('project-service') { sh 'mvn clean install -B -DskipTests' } }
-                }
-                stage('Task Service') {
-                    steps { dir('task-service') { sh 'mvn clean install -B -DskipTests' } }
-                }
-                stage('Notification Service') {
-                    steps { dir('notification-service') { sh 'mvn clean install -B -DskipTests' } }
-                }
-                stage('Config Server') {
-                    steps { dir('config-server') { sh 'mvn clean install -B -DskipTests' } }
-                }
-                stage('Eureka Server') {
-                    steps { dir('eureka-server') { sh 'mvn clean install -B -DskipTests' } }
-                }
-                stage('API Gateway') {
-                    steps { dir('spring-cloud-gateway') { sh 'mvn clean install -B -DskipTests' } }
-                }
+//                 stage('Project Service') {
+//                     steps { dir('project-service') { sh 'mvn clean install -B -DskipTests' } }
+//                 }
+//                 stage('Task Service') {
+//                     steps { dir('task-service') { sh 'mvn clean install -B -DskipTests' } }
+//                 }
+//                 stage('Notification Service') {
+//                     steps { dir('notification-service') { sh 'mvn clean install -B -DskipTests' } }
+//                 }
+//                 stage('Config Server') {
+//                     steps { dir('config-server') { sh 'mvn clean install -B -DskipTests' } }
+//                 }
+//                 stage('Eureka Server') {
+//                     steps { dir('eureka-server') { sh 'mvn clean install -B -DskipTests' } }
+//                 }
+//                 stage('API Gateway') {
+//                     steps { dir('spring-cloud-gateway') { sh 'mvn clean install -B -DskipTests' } }
+//                 }
             }
         }
 
@@ -69,7 +69,7 @@ pipeline {
                 script {
                     docker.withRegistry("https://index.docker.io/v1/", REGISTRY_CREDENTIALS) {
 //                         def services = ["profile-service", "project-service", "task-service", "notification-service", "config-server", "spring-cloud-gateway", "eureka-server"]
-                        def services = ["profile-service", "config-server"]
+                        def services = ["profile-service"]
 
                         for (srv in services) {
                             echo "Building Docker image for ${srv}"
