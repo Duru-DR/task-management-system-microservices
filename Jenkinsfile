@@ -10,6 +10,7 @@ pipeline {
         IMAGE_TAG = "${env.GIT_COMMIT.take(7)}"
         REGISTRY = "docker.io/fraqioui247"
         REGISTRY_CREDENTIALS = "dockerhub-creds"
+
         PROFILE_DB_NAME = 'profile_db'
         PROFILE_DB_USER = 'profile_user'
         PROJECT_DB_NAME = 'project_db'
@@ -18,10 +19,21 @@ pipeline {
         TASK_DB_USER = 'task_user'
         NOTIFICATION_DB_NAME = 'notification_db'
         NOTIFICATION_DB_USER = 'notification_user'
+
         PROFILE_DB_PASSWORD = credentials('profile-db-pass')
         PROJECT_DB_PASSWORD = credentials('project-db-pass')
         TASK_DB_PASSWORD = credentials('task-db-pass')
         NOTIFICATION_DB_PASSWORD = credentials('notification-db-pass')
+
+        PROFILE_DB_PORT = '5433'
+        PROFILE_SERVICE_PORT = '8082'
+        PROJECT_DB_PORT = '5434'
+        PROJECT_SERVICE_PORT = '8083'
+        TASK_DB_PORT = '5435'
+        TASK_SERVICE_PORT = '8084'
+        NOTIFICATION_DB_PORT = '5436'
+        NOTIFICATION_SERVICE_PORT = '8085'
+
         GITHUB_USERNAME = 'duru-DR'
         GITHUB_TOKEN = credentials('github-token')
     }
@@ -98,7 +110,15 @@ pipeline {
                     "TASK_DB_PASSWORD=${TASK_DB_PASSWORD}",
                     "NOTIFICATION_DB_PASSWORD=${NOTIFICATION_DB_PASSWORD}",
                     "GITHUB_USERNAME=${GITHUB_USERNAME}",
-                    "GITHUB_TOKEN=${GITHUB_TOKEN}"
+                    "GITHUB_TOKEN=${GITHUB_TOKEN}",
+                    "PROFILE_DB_PORT=${PROFILE_DB_PORT}",
+                    "PROFILE_SERVICE_PORT=${PROFILE_SERVICE_PORT}",
+                    "PROJECT_DB_PORT=${PROJECT_DB_PORT}",
+                    "PROJECT_SERVICE_PORT=${PROJECT_SERVICE_PORT}",
+                    "TASK_DB_PORT=${TASK_DB_PORT}",
+                    "TASK_SERVICE_PORT=${TASK_SERVICE_PORT}",
+                    "NOTIFICATION_DB_PORT=${NOTIFICATION_DB_PORT}",
+                    "NOTIFICATION_SERVICE_PORT=${NOTIFICATION_SERVICE_PORT}"
                 ]) {
                     sh '''
                         docker compose -f docker-compose-dep.yaml down -v

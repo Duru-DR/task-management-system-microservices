@@ -25,7 +25,7 @@ services:
     restart: always
     depends_on:
       - profile-db
-      - config-server
+#      - config-server
     env_file:
       - .env
     environment:
